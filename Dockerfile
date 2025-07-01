@@ -7,7 +7,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 RUN rm requirements.txt
 
-COPY ./auth_service /app
+COPY ./grammar-post /app
 
 COPY create_superuser.py /app/
 
