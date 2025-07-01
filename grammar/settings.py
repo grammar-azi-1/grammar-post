@@ -10,38 +10,24 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
-
-
 import os
 from pathlib import Path
-
 from datetime import timedelta
-import grammar.middleware
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
+SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-^@ws^%f(+gq+pyu-r_!_t!j8fdn9!f#n*4y7m_(^)7$3_-")
 
-# SECURITY WARNING: keep the secret key used in production secret!
-# GrammarAzi/grammar/settings.py
-JWT_SIGNING_KEY = os.getenv("JWT_SIGNING_KEY", "django-insecure-^@ws^%f(+gq+pyu-r_!_t!j8fdn9!f#n*4y7m_(^)7$3_-")
-
-# SECURITY WARNING: don't run with debug turned on in production!
-# Quick-start development settings - unsuitable for production
 DEBUG = os.getenv("DEBUG", "True") == "True"
 
 ALLOWED_HOSTS = ['*']
 
-SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-^@ws^%f(+gq+pyu-r_!_t!j8fdn9!f#n*4y7m_(^)7$3_-")
-
-
 BOT_TOKEN = "7000740386:AAHpAFzAWsyqnuMmhLYs_L-5-A_ySaLexq0"
-BOT_URL = "https://api.telegram.org/bot%s/"%BOT_TOKEN
+BOT_URL = "https://api.telegram.org/bot%s/" % BOT_TOKEN
 CHAT_ID = '-4957206808'
-# Application definition
 
 INSTALLED_APPS = [
     'modeltranslation',
@@ -62,7 +48,6 @@ INSTALLED_APPS = [
     "corsheaders",
 ]
 
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -80,9 +65,14 @@ MIDDLEWARE = [
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "https://grammar-azi.vercel.app",
-    "https://user-service-grammar-azi.onrender.com", 
+    "https://user-service-grammar-azi.onrender.com",
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://grammarbackendpub-14.onrender.com',
+    'https://grammarazi.onrender.com',
+    'https://user-service-grammar-azi.onrender.com',
+]
 
 ROOT_URLCONF = 'grammar.urls'
 
@@ -93,7 +83,7 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
-                'django.template.context_processors.request',
+               ^^^django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
@@ -111,26 +101,11 @@ MESSAGE_TAGS = {
     messages.ERROR: "alert-danger",
 }
 
-
 WSGI_APPLICATION = 'grammar.wsgi.application'
-
-# Database
-# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-CSRF_TRUSTED_ORIGINS = [
-    'https://grammarbackendpub-14.onrender.com',
-    'https://grammarazi.onrender.com',
-    'https://user-service-grammar-azi.onrender.com',
-]
-
-import os
-import dj_database_url
 
 DATABASES = {
     "default": dj_database_url.parse(os.environ.get("EXTERNAL_DATABASE_URL"))
 }
-
-# Password validation
-# https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -149,22 +124,17 @@ AUTH_PASSWORD_VALIDATORS = [
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication', 
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ]
 }
 
-
-from datetime import timedelta
-
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),  
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     "ALGORITHM": "HS256",
     "SIGNING_KEY": os.getenv("SECRET_KEY", "django-insecure-^@ws^%f(+gq+pyu-r_!_t!j8fdn9!f#n*4y7m_(^)7$3_-"),
     "AUTH_HEADER_TYPES": ('Bearer',),
 }
-# Internationalization
-# https://docs.djangoproject.com/en/5.2/topics/i18n/
 
 LOCALE_PATHS = (
     os.path.join(BASE_DIR, 'locale'),
@@ -178,26 +148,17 @@ LANGUAGES = (
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'Asia/Baku'  
+TIME_ZONE = 'Asia/Baku'
 
 USE_I18N = True
-
 USE_TZ = True
 
 AUTH_USER_MODEL = 'account.User'
-
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
-
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
