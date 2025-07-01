@@ -1,10 +1,19 @@
-FROM python:3.11
+FROM python:3.10-slim
 
-WORKDIR /code
+WORKDIR /app
 
-COPY requirements.txt ./
+COPY requirements.txt .
+
 RUN pip install --no-cache-dir -r requirements.txt
+RUN rm requirements.txt
 
-COPY . .
+COPY ./auth_service /app
 
-CMD [ "python", "./manage.py", "runserver", "0.0.0.0:8000" ]
+COPY create_superuser.py /app/
+
+COPY start.sh /app/start.sh
+RUN chmod +x /app/start.sh
+
+EXPOSE 8000
+
+CMD ["./start.sh"]

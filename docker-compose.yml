@@ -1,34 +1,47 @@
-version: '3.9'
-
 services:
-
-  db:
-    image: postgres
-    restart: always
-    ports:
-      - 5434:5432
-    volumes: 
-      - ./pgdb:/var/lib/postgresql/data
-    env_file:
-      - .env
-
-  
   web:
-    image: grammar
-    container_name: grammar
-    build: .
-    restart: always
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    env_file: ".env" 
     ports:
-      - "8002:8000"
-    env_file:
-      - .env
-    links:
-      - 'db'
+      - "8000:8000"
     depends_on:
-      - 'db'
+      my-postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
 
-  adminer:
-    image: adminer
+  my-postgres:
+    image: postgres:15
+    env_file: ".env" 
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"] 
+      interval: 10s
+      retries: 10
+      start_period: 60s
+
+  redis:
+    image: redis:latest
     restart: always
     ports:
-      - 8082:8080
+      - "6380:6379"
+
+  celery:
+    build:
+      context: .
+      dockerfile: Dockerfile.celery
+    env_file: ".env"  
+    depends_on:
+      - redis
+      - my-postgres
+    restart: always
+    user: "nobody"
+
+volumes:
+  postgres_data:

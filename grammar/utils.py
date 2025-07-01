@@ -1,4 +1,3 @@
-# grammar-post/grammar/utils.py
 import requests
 from django.conf import settings
 from rest_framework.exceptions import AuthenticationFailed
