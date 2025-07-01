@@ -1,0 +1,30 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block title %}
+    <title>Document</title>
+    {% endblock %}
+    <link rel="stylesheet" href="{% static 'css/vendor/vendor.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/plugins/plugins.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/style.min.css' %}">    
+    {% block css %}
+    {% endblock %}
+</head>
+<body>
+    {% include 'includes/header.html' %}
+    {% block content %}
+
+    {% endblock %}
+    <script src="{% static 'js/vendor/vendor.min.js' %}"></script>
+    <script src="{% static 'js/plugins/plugins.min.js' %}"></script>
+
+    <!-- Main Js -->
+    <script src="{% static 'js/main.js' %}"></script>
+    {% block js %}
+    {% endblock %}
+</body>
+</html>
