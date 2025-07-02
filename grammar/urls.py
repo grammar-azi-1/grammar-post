@@ -48,7 +48,7 @@ urlpatterns = [
     # Endpoints for JWT authentication
     path(
         "api/token/", 
-        include("users.urls.auth"),
+        include("account.urls.auth"),
     ),
     path(
         "api/token/refresh/", 
