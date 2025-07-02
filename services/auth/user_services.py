@@ -1,7 +1,7 @@
 import random
 import logging
 from django.contrib.auth import get_user_model
-from users.models import VerificationCode
+from account.models import VerificationCode
 
 __all__ = [
     "validate_verification_code"

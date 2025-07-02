@@ -2,12 +2,12 @@ import logging
 from django.utils.timezone import now
 from typing import Dict, Any
 
-from users.models.daily_message_limit import DailyMessageLimit
-from users.models.daily_messages import DailyMessage
-from users.models import VerificationCode
+from account.models.daily_message_limit import DailyMessageLimit
+from account.models.daily_messages import DailyMessage
+from account.models import VerificationCode
 
 from utils.verification_code import generate_verification_code
-from users.tasks import send_verification_email
+from account.tasks import send_verification_email
 
 __all__ = ["reset_password_send_code"]
 
