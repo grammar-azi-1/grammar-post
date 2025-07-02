@@ -2,7 +2,7 @@ import requests
 from django.conf import settings
 from rest_framework.exceptions import AuthenticationFailed
 
-def get_user_data_from_user_service(token):
+def get_user_form_jwt (token):
     """
     user-service-dən istifadəçi məlumatlarını əldə edir.
     """
