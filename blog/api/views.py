@@ -15,6 +15,7 @@ User = get_user_model()
 from rest_framework.response import Response
 from grammar.utils import get_user_form_jwt
 
+
 class NotificationsAPIView(ListCreateAPIView):
     serializer_class = NotificationSerializer
 
@@ -79,10 +80,12 @@ class CommentCreateAPIView(ListCreateAPIView):
         
         return JsonResponse(response, safe=False, status=201)
 
+
 class PostDeleteAPIView(DestroyAPIView):
     serializer_class = PostSerializer
     queryset = Post.objects.all()
     permission_classes = [IsAdminUser, ]
+
 
 class PostRetrieveUpdateAPIView(RetrieveUpdateAPIView):
     serializer_class = PostSerializer
@@ -92,6 +95,7 @@ class PostRetrieveUpdateAPIView(RetrieveUpdateAPIView):
 class PostShareRetrieveUpdateAPIView(RetrieveAPIView):
     serializer_class = PostShareSerializer
     queryset = Post.objects.all()
+
 
 class PostCreateAPIView(ListCreateAPIView):
     serializer_class = PostFilterSerializer

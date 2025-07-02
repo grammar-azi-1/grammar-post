@@ -39,12 +39,12 @@ class BlogView(CreateView):
             return redirect('login')
 
         token = auth_header.split(' ')[1]
-        user_data = get_user_data_from_user_service(token)
+        user_data = get_user_form_jwt(token)
         
         form = self.get_form()
         if form.is_valid():
             blog = form.save(commit=False)
-            blog.userId_id = user_data['id']  # user-service-dən gələn user_id
+            blog.userId_id = user_data['id']  
             blog.save()
             return redirect(reverse_lazy('blog'))
 
