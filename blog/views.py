@@ -6,7 +6,7 @@ from blog.models import Post, Comment
 from django.contrib import messages
 from django.utils.translation import gettext_lazy as _
 from rest_framework.permissions import IsAuthenticated
-from grammar.utils import get_user_data_from_user_service
+from grammar.utils import get_user_form_jwt
 
 
 class BlogView(CreateView):
@@ -39,7 +39,7 @@ class BlogView(CreateView):
             return redirect('login')
 
         token = auth_header.split(' ')[1]
-        user_data = get_user_data_from_user_service(token)
+        user_data = get_user_form_jwt(token)
         
         form = self.get_form()
         if form.is_valid():
