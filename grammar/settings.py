@@ -192,9 +192,8 @@ USE_I18N = True
 
 USE_TZ = True
 
-# Abstract User
-AUTH_USER_MODEL = "users.CustomUser"
-
+# AUTH_USER_MODEL = 'account.User'
+AUTH_USER_MODEL = "account.CustomUser"
 
 SECURE_SSL_REDIRECT = True
 SECURE_HSTS_SECONDS = 3600
