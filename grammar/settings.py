@@ -122,20 +122,11 @@ CSRF_TRUSTED_ORIGINS = [
     'https://user-service-grammar-azi.onrender.com',
 ]
 
-import dj_database_url
 import os
-
-
+import dj_database_url
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME":     os.environ.get("DB_NAME"),
-        "USER":     os.environ.get("DB_USER"),
-        "PASSWORD": os.environ.get("DB_PASSWORD"),
-        "HOST":     os.environ.get("DB_HOST"), 
-        "PORT":     os.environ.get("DB_PORT", "5433"),
-    }
+    "default": dj_database_url.config(default=os.environ.get("EXTERNAL_DATABASE_URL"))
 }
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
