@@ -192,7 +192,8 @@ USE_I18N = True
 
 USE_TZ = True
 
-AUTH_USER_MODEL = 'account.User'
+# Abstract User
+AUTH_USER_MODEL = "users.CustomUser"
 
 
 SECURE_SSL_REDIRECT = True
