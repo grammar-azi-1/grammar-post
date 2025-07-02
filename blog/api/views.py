@@ -1,35 +1,28 @@
 from blog.api.serializers import CommentSerializer, PostSerializer, PostShareSerializer, PostFilterSerializer
-from blog.models import Comment, Post, Notification
-from rest_framework.generics import (
-    ListCreateAPIView, DestroyAPIView, RetrieveUpdateAPIView,
-    RetrieveAPIView, RetrieveDestroyAPIView
-)
-from rest_framework.filters import OrderingFilter
-from rest_framework.permissions import IsAdminUser, IsAuthenticatedOrReadOnly
-from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.response import Response
-from rest_framework.views import APIView
+from blog.models import Comment, Post
+from rest_framework.generics import ListCreateAPIView, DestroyAPIView, RetrieveUpdateAPIView, ListCreateAPIView, RetrieveAPIView, RetrieveDestroyAPIView
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
+from rest_framework.filters import OrderingFilter
 from django.db.models import Count
+from rest_framework.permissions import IsAdminUser, IsAuthenticatedOrReadOnly
+from blog.models import Notification
+from django.shortcuts import get_object_or_404
+from rest_framework.pagination import LimitOffsetPagination
+from blog.models import Notification
+from blog.api.serializers import NotificationSerializer
 from django.contrib.auth import get_user_model
-from grammar.utils import get_user_form_jwt
-from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
-
 User = get_user_model()
-
+from rest_framework.response import Response
+from grammar.utils import get_user_form_jwt
 
 class NotificationsAPIView(ListCreateAPIView):
     serializer_class = NotificationSerializer
 
-    @swagger_auto_schema(operation_summary="List notifications for a user")
     def get_queryset(self):
         return Notification.objects.filter(recipient=self.kwargs['userId'])
-
-    @swagger_auto_schema(operation_summary="Create a notification")
+    
     def perform_create(self, serializer):
-        recipient_user = get_object_or_404(User, pk=self.kwargs['userId'])
+        recipient_user = get_object_or_404(User, pk = self.kwargs['userId'])
         serializer.save(recipient=recipient_user, sender=self.request.user)
 
 
@@ -43,16 +36,15 @@ class CommentCreateAPIView(ListCreateAPIView):
     queryset = Comment.objects.all()
     permission_classes = [IsAuthenticatedOrReadOnly]
 
-    @swagger_auto_schema(operation_summary="List comments for a post")
     def get_queryset(self):
         return Comment.objects.filter(postId=self.kwargs['post_id'])
-
-    @swagger_auto_schema(operation_summary="Create a comment on a post")
+    
     def perform_create(self, serializer):
         post = get_object_or_404(Post, pk=self.kwargs['post_id'])
         serializer.save(userId=self.request.user, postId=post)
-
+    
     def create(self, request, *args, **kwargs):
+
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
@@ -68,30 +60,29 @@ class CommentCreateAPIView(ListCreateAPIView):
             recipient = comment.postId.userId
             notif_type = 'reply'
 
+
         content = serializer.validated_data.get('content', '')
         tags = [word for word in content.split() if word.startswith('#')]
 
         response = {
-            "commentId": serializer.instance.id,
-            "message": "Comment created successfully",
-        }
-
+                "commentId": serializer.instance.id,
+                "message": "Comment uğurla yaradıldı",
+            }
+        
         if recipient and request.user != recipient:
             Notification.objects.create(
-                recipient=recipient,
-                sender=request.user,
-                type=notif_type,
-                commentId=comment,
+                recipient = recipient,
+                sender = request.user,
+                type = notif_type,
+                commentId = comment,
             )
-
+        
         return JsonResponse(response, safe=False, status=201)
-
 
 class PostDeleteAPIView(DestroyAPIView):
     serializer_class = PostSerializer
     queryset = Post.objects.all()
-    permission_classes = [IsAdminUser]
-
+    permission_classes = [IsAdminUser, ]
 
 class PostRetrieveUpdateAPIView(RetrieveUpdateAPIView):
     serializer_class = PostSerializer
@@ -102,24 +93,26 @@ class PostShareRetrieveUpdateAPIView(RetrieveAPIView):
     serializer_class = PostShareSerializer
     queryset = Post.objects.all()
 
-
 class PostCreateAPIView(ListCreateAPIView):
     serializer_class = PostFilterSerializer
     queryset = Post.objects.all()
-    filter_backends = [OrderingFilter]
+    filter_backends = [OrderingFilter,]
     pagination_class = LimitOffsetPagination
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly,]
     ordering_fields = ['created_date', 'like', 'comment_count']
 
-    @swagger_auto_schema(operation_summary="List posts with advanced ordering")
+
     def get_queryset(self):
         ordering = self.request.query_params.get('ordering')
 
-        base = Post.objects.annotate(comment_count=Count('comments'))
+        base = ( Post.objects.annotate(
+            comment_count = Count('comments')
+        ))
 
         if ordering:
             return base.order_by(ordering)
 
+    
         likeslist = list(base.order_by('-like'))
         comment_countlist = list(base.order_by('-comment_count'))
         createdlist = list(base.order_by('-created_date'))
@@ -137,6 +130,23 @@ class PostCreateAPIView(ListCreateAPIView):
 
         return finalList
 
+    # def perform_update(self, serializer):
+    #     post = self.get_object()
+
+    #     old_like = post.like
+
+    #     updated_post = serializer.save()
+
+    #     new_like = updated_post.like
+
+        # if request.user != post.userId and new_like > old_like:
+        #     Notification.objects.create(
+        #         recipient = post.user,
+        #         sender = request.user,
+        #         type = 'like',
+        #         postId = post.id,
+        #     )
+        
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
         total = len(queryset)
@@ -155,19 +165,19 @@ class PostCreateAPIView(ListCreateAPIView):
             "total": total
         })
 
-    @swagger_auto_schema(operation_summary="Create a new post")
     def create(self, request, *args, **kwargs):
+
         auth_header = request.headers.get('Authorization')
 
         if not auth_header or not auth_header.startswith('Bearer '):
             return Response({'message': 'Missing or Invalid Token'}, status=401)
-
+        
         token = auth_header.split(' ')[1]
         user_data = get_user_form_jwt(token)
 
         if not user_data:
             return Response({"detail": "Invalid token"}, status=401)
-
+        
         mutable_data = request.data.copy()
         mutable_data['userId'] = user_data['id']
 
@@ -175,11 +185,12 @@ class PostCreateAPIView(ListCreateAPIView):
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
 
-        response = {
-            "postId": serializer.data['id'],
-            "message": "Post created successfully",
-            "tags": serializer.instance.tags,
-            "shareLink": f"https://grammarazi.onrender.com/en/api/posts/{serializer.data['id']}"
-        }
 
+        response = {
+                "postId": serializer.data['id'],
+                "message": "Post uğurla yaradıldı",
+                "tags": serializer.instance.tags,
+                "shareLink": f"https://grammarazi.onrender.com/en/api/posts/{serializer.data['id']}" 
+            }
+        
         return JsonResponse(response, safe=False, status=201)

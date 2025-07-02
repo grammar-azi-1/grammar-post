@@ -39,7 +39,7 @@ class BlogView(CreateView):
             return redirect('login')
 
         token = auth_header.split(' ')[1]
-        user_data = get_user_form_jwt(token)
+        user_data = get_user_data_from_user_service(token)
         
         form = self.get_form()
         if form.is_valid():
