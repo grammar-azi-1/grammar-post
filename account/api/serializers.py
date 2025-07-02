@@ -7,6 +7,7 @@ from django.contrib.auth.models import Group, Permission
 import datetime
 from account.utils import is_online
   
+
 class PermissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Permission
@@ -14,6 +15,7 @@ class PermissionSerializer(serializers.ModelSerializer):
             'id',
             'name',
         )
+
 
 class GroupSerizalizer(serializers.ModelSerializer):
     permissions = PermissionSerializer
@@ -24,6 +26,7 @@ class GroupSerizalizer(serializers.ModelSerializer):
             'name',
             'permissions',
        )
+
 
 class UserOnlineSerizalizer(serializers.ModelSerializer):
     post_count = serializers.SerializerMethodField()
@@ -54,6 +57,7 @@ class UserOnlineSerizalizer(serializers.ModelSerializer):
 
         return is_online(obj)
 
+
 class UsersMainProfileSerizalizer(serializers.ModelSerializer):
     posts = PostSerializer(many=True)
     class Meta:
@@ -65,6 +69,7 @@ class UsersMainProfileSerizalizer(serializers.ModelSerializer):
             'posts'
         )
 
+
 class UserProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -75,6 +80,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             'password',
             'groups',
         )
+
 
 class UserAPIProfileSerializer(serializers.ModelSerializer):
 
@@ -91,6 +97,7 @@ class UserAPIProfileSerializer(serializers.ModelSerializer):
             'password',
         )
 
+
 class UserTokenRefreshSerializer(serializers.ModelSerializer):
 
     access = serializers.CharField()
@@ -100,6 +107,7 @@ class UserTokenRefreshSerializer(serializers.ModelSerializer):
         fields = (
             'access',
         )
+
 
 class UserTokenPairSeializer(TokenObtainPairSerializer):
 
