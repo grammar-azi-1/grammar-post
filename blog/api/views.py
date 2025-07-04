@@ -98,6 +98,8 @@ class PostShareRetrieveUpdateAPIView(RetrieveAPIView):
     queryset = Post.objects.all()
 
 class PostLikeAPIView(APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly,]
+
     def post(self, request, pk):
         try:
             post = Post.objects.get(pk=pk)
