@@ -112,6 +112,7 @@ class PostLikeAPIView(APIView):
         if post.liked_by.filter(pk = user.pk).exists():
             post.like -= 1
             post.liked_by.remove(user)
+            post.save()
             return Response({"message": "Unliked", "like_count": post.like}, status=status.HTTP_200_OK)
         else:
             post.like += 1
@@ -134,6 +135,7 @@ class CommentLikeAPIView(APIView):
         if comment.liked_by.filter(pk = user.pk).exists():
             comment.like -= 1
             comment.liked_by.remove(user)
+            comment.save()
             return Response({"message": "Unliked", "like_count": comment.like}, status=status.HTTP_200_OK)
         else:
             comment.like += 1

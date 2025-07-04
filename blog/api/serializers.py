@@ -28,6 +28,7 @@ class CommentSerializer(serializers.ModelSerializer):
             'content',
             'image',
             'like',
+            'created_date',
         )
 
 class PostSerializer(serializers.ModelSerializer):
