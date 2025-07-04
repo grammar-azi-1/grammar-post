@@ -17,7 +17,7 @@ class PermissionSerializer(serializers.ModelSerializer):
         )
 
 
-class GroupSerizalizer(serializers.ModelSerializer):
+class GroupSerializer(serializers.ModelSerializer):
     permissions = PermissionSerializer
 
     class Meta:
@@ -28,7 +28,7 @@ class GroupSerizalizer(serializers.ModelSerializer):
        )
 
 
-class UserOnlineSerizalizer(serializers.ModelSerializer):
+class UserOnlineSerializer(serializers.ModelSerializer):
     post_count = serializers.SerializerMethodField()
     online_status = serializers.SerializerMethodField()
     last_active = serializers.SerializerMethodField()
@@ -58,7 +58,7 @@ class UserOnlineSerizalizer(serializers.ModelSerializer):
         return is_online(obj)
 
 
-class UsersMainProfileSerizalizer(serializers.ModelSerializer):
+class UsersMainProfileSerializer(serializers.ModelSerializer):
     posts = PostSerializer(many=True)
     class Meta:
         model = User
@@ -109,7 +109,7 @@ class UserTokenRefreshSerializer(serializers.ModelSerializer):
         )
 
 
-class UserTokenPairSeializer(TokenObtainPairSerializer):
+class UserTokenPairSerializer(TokenObtainPairSerializer):
 
     def validate(self, attrs):
         data = super().validate(attrs)
@@ -120,7 +120,7 @@ class UserTokenPairSeializer(TokenObtainPairSerializer):
 
 class UserRoleSerializer(serializers.ModelSerializer):
 
-    groups = GroupSerizalizer(many=True)
+    groups = GroupSerializer(many=True)
     id = serializers.IntegerField()
 
     class Meta:

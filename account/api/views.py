@@ -4,7 +4,7 @@ from rest_framework_simplejwt.views import (
     )
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.generics import ListCreateAPIView, RetrieveAPIView, ListAPIView
-from account.api.serializers import UserAPIProfileSerializer, UserTokenRefreshSerializer, UserOnlineSerizalizer, UsersMainProfileSerizalizer, GroupSerizalizer, UserRoleSerializer
+from account.api.serializers import UserAPIProfileSerializer, UserTokenRefreshSerializer, UserOnlineSerializer, UsersMainProfileSerializer, GroupSerializer, UserRoleSerializer
 from account.api.filters import UserFilterset
 from django.contrib.auth.models import Group
 from django.contrib.auth import get_user_model
@@ -39,7 +39,7 @@ class UserTokenRefreshView(TokenRefreshView):
 
 
 class UserOnlineApiView(ListAPIView):
-    serializer_class = UserOnlineSerizalizer
+    serializer_class = UserOnlineSerializer
 
     def get_queryset(self):
         threshold = now() - timedelta(seconds=3)
@@ -49,17 +49,17 @@ class UserOnlineApiView(ListAPIView):
 
 class UserRetrieveUpdateView(RetrieveAPIView):
     queryset = User.objects.all()
-    serializer_class = UsersMainProfileSerizalizer
+    serializer_class = UsersMainProfileSerializer
 
 
 class UserListCreateView(ListCreateAPIView):
     queryset = User.objects.all()
-    serializer_class = UsersMainProfileSerizalizer
+    serializer_class = UsersMainProfileSerializer
     filterset_class = UserFilterset
 
 
 class GroupListCreateAPIView(ListCreateAPIView):
-    serializer_class = GroupSerizalizer
+    serializer_class = GroupSerializer
     queryset = Group.objects.all()
 
     
