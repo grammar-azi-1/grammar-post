@@ -1,4 +1,3 @@
-# account/models/user.py
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -6,6 +5,7 @@ from django.utils.translation import gettext_lazy as _
 from account.managers import CustomUserManager
 from utils.slug_manager import generate_unique_slug
 from django.utils.timezone import now
+
 
 class CustomUser(AbstractUser):
     """
