@@ -14,7 +14,8 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 from rest_framework.response import Response
 from grammar.utils import get_user_form_jwt
-
+from rest_framework import status
+from rest_framework.views import APIView
 
 class NotificationsAPIView(ListCreateAPIView):
     serializer_class = NotificationSerializer
@@ -96,6 +97,24 @@ class PostShareRetrieveUpdateAPIView(RetrieveAPIView):
     serializer_class = PostShareSerializer
     queryset = Post.objects.all()
 
+class PostLikeAPIView(APIView):
+    def post(self, request, pk):
+        try:
+            post = Post.objects.get(pk=pk)
+
+        except Post.DoesNotExist:
+            return Response({'error': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        user = request.user
+
+        if post.liked_by.filter(pk = user.pk).exists():
+            return Response({"message": "Already liked"}, status=status.HTTP_200_OK)
+
+        post.like += 1
+        post.liked_by.add(user)
+        post.save()
+
+        return Response({"message": "Liked", "like_count": post.like}, status=status.HTTP_200_OK)
 
 class PostCreateAPIView(ListCreateAPIView):
     serializer_class = PostFilterSerializer

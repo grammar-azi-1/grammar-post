@@ -4,7 +4,6 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 from core.validators import validate_file_size
 from blog.validators import validate_file_type
-
 # Create your models here.
 
 class Post(AbstractModel):
@@ -15,6 +14,7 @@ class Post(AbstractModel):
     content = models.TextField(max_length=5000)
     like = models.PositiveIntegerField(default=0)
     tags = models.JSONField(default=list, blank=True, null=True)
+    liked_by = models.ManyToManyField(User, related_name='liked_posts', blank=True)
 
     def len(self):
         return len(self.objects.all())
