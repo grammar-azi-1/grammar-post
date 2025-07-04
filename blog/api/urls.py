@@ -9,5 +9,5 @@ urlpatterns = [
     path('posts/<int:pk>/share', PostShareRetrieveUpdateAPIView.as_view(), name='post_share'),
     path('notifications/<int:userId>/', NotificationsAPIView.as_view(), name='notifications'),
     path('notifications/<int:pk>/delete/', NotificationRetrieveAPIView.as_view(), name='notification_delete'),
-    path('posts/<int:pk>/like', PostLikeAPIView.as_view(), name='post_like'),
+    path('posts/<int:pk>/like/', PostLikeAPIView.as_view(), name='post_like'),
 ]
