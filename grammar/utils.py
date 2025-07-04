@@ -6,7 +6,7 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 
-def get_user_from_jwt(token):
+def get_user_form_jwt(token):
     """
     Decodes the given JWT token and retrieves the corresponding user from the local database.
     Does not send any external HTTP request.
