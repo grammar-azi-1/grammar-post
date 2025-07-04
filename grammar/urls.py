@@ -79,6 +79,7 @@ urlpatterns += i18n_patterns(
 
     # API endpoints with unique prefixes to avoid conflicts
     path('api/', include('grammars.api.urls')),
+    path('api/', include('blog.api.urls')),
     path('api/', include('core.api.urls')),
     path('api/', include('account.api.urls')),
 )
