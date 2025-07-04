@@ -118,6 +118,28 @@ class PostLikeAPIView(APIView):
             post.liked_by.add(user)
             post.save()
             return Response({"message": "Liked", "like_count": post.like}, status=status.HTTP_200_OK)
+        
+class CommentLikeAPIView(APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly,]
+
+    def post(self, request, pk):
+        try:
+            comment = Comment.objects.get(pk=pk)
+
+        except Comment.DoesNotExist:
+            return Response({'error': 'Comment not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        user = request.user
+
+        if comment.liked_by.filter(pk = user.pk).exists():
+            comment.like -= 1
+            comment.liked_by.remove(user)
+            return Response({"message": "Unliked", "like_count": comment.like}, status=status.HTTP_200_OK)
+        else:
+            comment.like += 1
+            comment.liked_by.add(user)
+            comment.save()
+            return Response({"message": "Liked", "like_count": comment.like}, status=status.HTTP_200_OK)
 
 class PostCreateAPIView(ListCreateAPIView):
     serializer_class = PostFilterSerializer

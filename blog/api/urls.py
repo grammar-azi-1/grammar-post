@@ -1,4 +1,4 @@
-from blog.api.views import CommentCreateAPIView, PostLikeAPIView, PostCreateAPIView, PostDeleteAPIView, PostRetrieveUpdateAPIView, PostShareRetrieveUpdateAPIView, NotificationsAPIView, NotificationRetrieveAPIView
+from blog.api.views import CommentCreateAPIView, PostLikeAPIView, CommentLikeAPIView, PostCreateAPIView, PostDeleteAPIView, PostRetrieveUpdateAPIView, PostShareRetrieveUpdateAPIView, NotificationsAPIView, NotificationRetrieveAPIView
 from django.urls import path
 
 urlpatterns = [
@@ -10,4 +10,5 @@ urlpatterns = [
     path('notifications/<int:userId>/', NotificationsAPIView.as_view(), name='notifications'),
     path('notifications/<int:pk>/delete/', NotificationRetrieveAPIView.as_view(), name='notification_delete'),
     path('posts/<int:pk>/like/', PostLikeAPIView.as_view(), name='post_like'),
+    path('comments/<int:pk>/like/', CommentLikeAPIView.as_view(), name='comment_like'),
 ]
