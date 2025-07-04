@@ -4,7 +4,6 @@ User = get_user_model()
 from rest_framework import serializers
 from blog.api.serializers import PostSerializer
 from django.contrib.auth.models import Group, Permission
-import datetime
 from account.utils import is_online
   
 
@@ -38,7 +37,7 @@ class UserOnlineSerializer(serializers.ModelSerializer):
         fields=(
             'id',
             'username',
-            'image',
+            'profile_picture',
             'post_count',
             'online_status',
             'last_active',
@@ -65,7 +64,7 @@ class UsersMainProfileSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'username',
-            'image',
+            'profile_picture',
             'posts'
         )
 
