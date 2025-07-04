@@ -5,7 +5,7 @@ from django.utils.translation import gettext_lazy as _
 
 from account.managers import CustomUserManager
 from utils.slug_manager import generate_unique_slug
-
+from django.utils.timezone import now
 
 class CustomUser(AbstractUser):
     """
@@ -37,6 +37,8 @@ class CustomUser(AbstractUser):
     is_verified = models.BooleanField(
         default=False
     )
+    last_active = models.DateTimeField(default=now)
+    online_status = models.BooleanField(default=False)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["username"]
@@ -51,3 +53,6 @@ class CustomUser(AbstractUser):
             base = self.username or self.email.split("@")[0]
             self.slug = generate_unique_slug(base, CustomUser)
         super().save(*args, **kwargs)
+
+    def postCount(self):
+        return len(self.posts.all())
