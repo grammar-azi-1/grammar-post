@@ -110,13 +110,14 @@ class PostLikeAPIView(APIView):
         user = request.user
 
         if post.liked_by.filter(pk = user.pk).exists():
-            return Response({"message": "Already liked"}, status=status.HTTP_200_OK)
-
-        post.like += 1
-        post.liked_by.add(user)
-        post.save()
-
-        return Response({"message": "Liked", "like_count": post.like}, status=status.HTTP_200_OK)
+            post.like -= 1
+            post.liked_by.remove(user)
+            return Response({"message": "Unliked", "like_count": post.like}, status=status.HTTP_200_OK)
+        else:
+            post.like += 1
+            post.liked_by.add(user)
+            post.save()
+            return Response({"message": "Liked", "like_count": post.like}, status=status.HTTP_200_OK)
 
 class PostCreateAPIView(ListCreateAPIView):
     serializer_class = PostFilterSerializer
