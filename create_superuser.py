@@ -1,4 +1,4 @@
-from django.core.management import BaseCommand
+from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
 import os
 
@@ -17,14 +17,3 @@ class Command(BaseCommand):
             self.stdout.write(self.style.SUCCESS(f"Superuser with email \"{email}\" created."))
         else:
             self.stdout.write(self.style.WARNING(f"Superuser with email \"{email}\" already exists."))
-
-
-            
-class Command(BaseCommand):
-    def handle(self, *args, **options):
-        User = get_user_model()
-        if not User.objects.filter(username='superadmin').exists():
-            User.objects.create_superuser("superadmin", 'admin@test.com', 'admin')
-            self.stdout.write(self.style.SUCCESS('Succesfully created super user!'))
-        else:
-            self.stdout.write(self.style.ERROR('Cant create another user with the same name!'))
