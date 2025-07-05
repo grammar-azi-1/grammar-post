@@ -12,10 +12,13 @@ class Post(AbstractModel):
     title = models.CharField(max_length=50)
     image = models.ImageField(upload_to='post_images/', blank=True, null=True)
     content = models.TextField(max_length=5000)
-    like = models.PositiveIntegerField(default=0)
     tags = models.JSONField(default=list, blank=True, null=True)
     liked_by = models.ManyToManyField(User, related_name='liked_posts', blank=True)
 
+    @property
+    def like(self):
+        return self.liked_by.count()
+    
     def len(self):
         return len(self.objects.all())
     
