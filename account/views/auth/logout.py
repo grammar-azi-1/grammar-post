@@ -4,8 +4,10 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import TokenError
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from django.utils.timezone import now
 
 from account.serializers.auth import LogoutSerializer
+from account.models import CustomUser 
 
 __all__ = ["LogoutView"]
 
@@ -68,7 +70,18 @@ class LogoutView(APIView):
 
         try:
             token = RefreshToken(refresh_token)
+            user_id = token.payload.get("user_id") 
+
             token.blacklist()
+
+            try:
+                user = CustomUser.objects.get(id=user_id)
+                user.online_status = False
+                user.last_active = now()
+                user.save(update_fields=["online_status", "last_active"])
+                logger.info(f"User {user.email} status set to offline.")
+            except CustomUser.DoesNotExist:
+                logger.warning(f"User with id {user_id} not found.")
 
             logger.info("User logged out successfully, token blacklisted") 
             return Response({

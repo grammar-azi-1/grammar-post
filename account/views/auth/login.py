@@ -2,6 +2,7 @@ import logging
 from rest_framework.views import APIView, Response, status
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from django.contrib.auth import authenticate
 
 from account.serializers.auth import LoginSerializer
 
@@ -62,7 +63,15 @@ class LoginView(APIView):
         serializer = LoginSerializer(data=request.data)
 
         if serializer.is_valid():
+            email = request.data.get("email")
+            password = request.data.get("password")
+            user = authenticate(request=request, email=email, password=password)
             logger.info("Login successful") 
+            if user:
+                user.online_status = True
+                user.last_active = now()
+                user.save(update_fields=["online_status", "last_active"])
+
             return Response(
                 serializer.validated_data, 
                 status=status.HTTP_200_OK
