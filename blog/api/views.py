@@ -1,10 +1,10 @@
 from blog.api.serializers import CommentSerializer, PostSerializer, PostShareSerializer, PostFilterSerializer
 from blog.models import Comment, Post
-from rest_framework.generics import ListCreateAPIView, DestroyAPIView, RetrieveUpdateAPIView, ListCreateAPIView, RetrieveAPIView, RetrieveDestroyAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView, ListCreateAPIView, RetrieveAPIView, RetrieveDestroyAPIView
 from django.http import JsonResponse
 from rest_framework.filters import OrderingFilter
 from django.db.models import Count
-from rest_framework.permissions import IsAdminUser, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAdminUser, IsAuthenticatedOrReadOnly, IsAuthenticated
 from blog.models import Notification
 from django.shortcuts import get_object_or_404
 from rest_framework.pagination import LimitOffsetPagination
@@ -82,11 +82,24 @@ class CommentCreateAPIView(ListCreateAPIView):
         return JsonResponse(response, safe=False, status=201)
 
 
-class PostDeleteAPIView(DestroyAPIView):
+class PostDeleteAPIView(RetrieveDestroyAPIView):
     serializer_class = PostSerializer
     queryset = Post.objects.all()
     permission_classes = [IsAdminUser, ]
 
+class PostForUserDeleteAPIView(RetrieveDestroyAPIView):
+    serializer_class = PostSerializer
+    queryset = Post.objects.all()
+    permission_classes = [IsAuthenticated, ]
+
+    def get_object(self):
+        obj = get_object_or_404(Post, self.kwargs['pk'])
+
+        if self.request.user.id != obj.userId:
+            from rest_framework.exceptions import PermissionDenied
+            raise PermissionDenied('You dont have access to delete this object')
+        
+        return obj
 
 class PostRetrieveUpdateAPIView(RetrieveUpdateAPIView):
     serializer_class = PostSerializer
