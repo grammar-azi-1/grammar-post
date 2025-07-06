@@ -100,6 +100,11 @@ class PostForUserDeleteAPIView(RetrieveDestroyAPIView):
             raise PermissionDenied('You dont have access to delete this object')
         
         return obj
+    
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.delete()  # Don't try to unpack
+        return Response({'detail': 'Post deleted successfully.'}, status=status.HTTP_204_NO_CONTENT)
 
 class PostRetrieveUpdateAPIView(RetrieveUpdateAPIView):
     serializer_class = PostSerializer
