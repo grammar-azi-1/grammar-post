@@ -5,7 +5,7 @@ from rest_framework import serializers
 from blog.api.serializers import PostSerializer
 from django.contrib.auth.models import Group, Permission
 from account.utils import is_online
-  
+from blog.models import Notification
 
 class PermissionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -128,3 +128,18 @@ class UserRoleSerializer(serializers.ModelSerializer):
             'id',
             'groups',
         )
+
+class NotificationSerializer(serializers.ModelSerializer):
+
+    sender = UsersMainProfileSerializer()
+
+    class Meta:
+       model = Notification
+       fields = (
+            "id",
+            "type",
+            'sender',
+            "postId",
+            "commentId",
+            "created_date",
+       )

@@ -1,23 +1,8 @@
 from rest_framework import serializers
 from blog.models import Comment, Post
-from blog.models import Notification
-from account.api.serializers import UsersMainProfileSerializer
 
 
-class NotificationSerializer(serializers.ModelSerializer):
 
-    sender = UsersMainProfileSerializer()
-
-    class Meta:
-       model = Notification
-       fields = (
-            "id",
-            "type",
-            'sender',
-            "postId",
-            "commentId",
-            "created_date",
-       )
        
 class CommentSerializer(serializers.ModelSerializer):
     
@@ -33,6 +18,7 @@ class CommentSerializer(serializers.ModelSerializer):
             'like',
             'created_date',
         )
+        read_only_fields = ('postId', 'userId', 'like', 'created_date')
 
 class PostSerializer(serializers.ModelSerializer):
     

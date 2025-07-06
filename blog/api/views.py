@@ -9,7 +9,7 @@ from blog.models import Notification
 from django.shortcuts import get_object_or_404
 from rest_framework.pagination import LimitOffsetPagination
 from blog.models import Notification
-from blog.api.serializers import NotificationSerializer
+from account.api.serializers import NotificationSerializer
 from django.contrib.auth import get_user_model
 User = get_user_model()
 from rest_framework.response import Response
