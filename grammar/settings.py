@@ -134,6 +134,8 @@ CSRF_TRUSTED_ORIGINS = [
     'https://grammarbackendpub-14.onrender.com',
     'https://grammarazi.onrender.com',
     'https://user-service-grammar-azi.onrender.com',
+    'https://grammar-post.onrender.com/',
+
 ]
 
 import os
