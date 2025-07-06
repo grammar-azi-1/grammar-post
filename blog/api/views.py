@@ -168,7 +168,6 @@ class PostCreateAPIView(ListCreateAPIView):
 
         base = ( Post.objects.annotate(
             comment_count = Count('comments'),
-            like=models.F('like') 
         ))
 
         if ordering:
