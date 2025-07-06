@@ -95,7 +95,7 @@ class PostForUserDeleteAPIView(RetrieveDestroyAPIView):
     def get_object(self):
         obj = get_object_or_404(Post, self.kwargs['pk'])
 
-        if self.request.user.id != obj.userId:
+        if self.request.user != obj.userId:
             from rest_framework.exceptions import PermissionDenied
             raise PermissionDenied('You dont have access to delete this object')
         
