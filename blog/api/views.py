@@ -92,18 +92,18 @@ class PostForUserDeleteAPIView(RetrieveDestroyAPIView):
     queryset = Post.objects.all()
     permission_classes = [IsAuthenticated, ]
 
-def get_object(self):
-    obj = get_object_or_404(Post, pk=self.kwargs['pk'])
+    def get_object(self):
+        obj = get_object_or_404(Post, pk=self.kwargs['pk'])
 
-    if self.request.user != obj.userId:
-        from rest_framework.exceptions import PermissionDenied
-        raise PermissionDenied('You don’t have access to delete this object')
+        if self.request.user != obj.userId:
+            from rest_framework.exceptions import PermissionDenied
+            raise PermissionDenied('You don’t have access to delete this object')
 
-    return obj
+        return obj
     
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
-        instance.delete()  # Don't try to unpack
+        instance.delete()  
         return Response({'detail': 'Post deleted successfully.'}, status=status.HTTP_204_NO_CONTENT)
 
 class PostRetrieveUpdateAPIView(RetrieveUpdateAPIView):
