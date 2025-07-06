@@ -129,8 +129,8 @@ class PostLikeAPIView(APIView):
             return Response({"message": "Unliked", "like_count": post.like}, status=status.HTTP_200_OK)
         else:
             post.liked_by.add(user)
-            post.save()
             post.like += 1
+            post.save()
             return Response({"message": "Liked", "like_count": post.like}, status=status.HTTP_200_OK)
         
 class CommentLikeAPIView(APIView):

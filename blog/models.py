@@ -14,7 +14,7 @@ class Post(AbstractModel):
     image = models.ImageField(upload_to='post_images/', blank=True, null=True)
     content = models.TextField(max_length=5000)
     tags = models.JSONField(default=list, blank=True, null=True)
-    liked_by = models.ManyToManyField(User, related_name='liked_posts', blank=True)
+    liked_by = models.ManyToManyField(User, related_name='liked_posts', blank=True, null=True)
 
 
     
