@@ -43,10 +43,6 @@ class CommentCreateAPIView(ListCreateAPIView):
     def get_queryset(self):
         return Comment.objects.filter(postId=self.kwargs['post_id'])
     
-    def perform_create(self, serializer):
-        post = get_object_or_404(Post, pk=self.kwargs['post_id'])
-        serializer.save(userId=self.request.user, postId=post)
-    
     def create(self, request, *args, **kwargs):
 
         serializer = self.get_serializer(data=request.data)
