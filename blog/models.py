@@ -18,9 +18,9 @@ class Post(AbstractModel):
 
 
     
-@classmethod
-def len(self):
-    return self.objects.count()
+    @classmethod
+    def len(self):
+        return self.objects.count()
     
     def comment_count(self):
         return len(self.comments.all())
