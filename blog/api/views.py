@@ -19,6 +19,7 @@ from rest_framework.views import APIView
 
 class NotificationsAPIView(ListCreateAPIView):
     serializer_class = NotificationSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
         return Notification.objects.filter(recipient=self.kwargs['userId'])
