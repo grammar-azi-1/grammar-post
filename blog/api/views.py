@@ -16,6 +16,7 @@ from rest_framework.response import Response
 from grammar.utils import get_user_form_jwt
 from rest_framework import status
 from rest_framework.views import APIView
+from django.db import models
 
 class NotificationsAPIView(ListCreateAPIView):
     serializer_class = NotificationSerializer
@@ -170,7 +171,8 @@ class PostCreateAPIView(ListCreateAPIView):
         ordering = self.request.query_params.get('ordering')
 
         base = ( Post.objects.annotate(
-            comment_count = Count('comments')
+            comment_count = Count('comments'),
+            like=models.F('like') 
         ))
 
         if ordering:
