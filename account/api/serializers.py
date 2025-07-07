@@ -132,6 +132,7 @@ class UserRoleSerializer(serializers.ModelSerializer):
 class NotificationSerializer(serializers.ModelSerializer):
 
     sender = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    recipient = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
 
     class Meta:
        model = Notification
