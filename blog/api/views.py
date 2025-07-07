@@ -78,7 +78,8 @@ class CommentCreateAPIView(ListCreateAPIView):
                 recipient=recipient,
                 sender=request.user,
                 type=notif_type,
-                commentId=comment,
+                commentId=comment.parentCommentId if comment.parentCommentId else None,
+                postId=comment.postId if comment.postId else None,
             )
 
         return JsonResponse(response, safe=False, status=201)
