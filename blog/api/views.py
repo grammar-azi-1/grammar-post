@@ -47,7 +47,12 @@ class CommentCreateAPIView(ListCreateAPIView):
 
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
+
+        serializer.save(
+            userId=request.user,
+            postId_id=self.kwargs['post_id']
+        )
+
         comment = serializer.instance
 
         recipient = None
@@ -60,24 +65,24 @@ class CommentCreateAPIView(ListCreateAPIView):
             recipient = comment.postId.userId
             notif_type = 'reply'
 
-
         content = serializer.validated_data.get('content', '')
         tags = [word for word in content.split() if word.startswith('#')]
 
         response = {
-                "commentId": serializer.instance.id,
-                "message": "Comment uğurla yaradıldı",
-            }
-        
+            "commentId": comment.id,
+            "message": "Comment uğurla yaradıldı",
+        }
+
         if recipient and request.user != recipient:
             Notification.objects.create(
-                recipient = recipient,
-                sender = request.user,
-                type = notif_type,
-                commentId = comment,
+                recipient=recipient,
+                sender=request.user,
+                type=notif_type,
+                commentId=comment,
             )
-        
+
         return JsonResponse(response, safe=False, status=201)
+
 
 
 class PostDeleteAPIView(RetrieveDestroyAPIView):
