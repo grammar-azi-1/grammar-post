@@ -3,6 +3,7 @@ from rest_framework.views import APIView, Response, status
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from django.contrib.auth import authenticate
+from django.utils.timezone import now
 
 from account.serializers.auth import LoginSerializer
 
