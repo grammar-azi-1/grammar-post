@@ -42,7 +42,7 @@ class UserOnlineApiView(UpdateLastActivityMixin, ListAPIView):
     serializer_class = UserOnlineSerializer
 
     def get_queryset(self):
-        threshold = now() - timedelta(seconds=3)
+        threshold = now() - timedelta(seconds=31)
         return User.objects.filter(last_active__gte=threshold)
 
 class UserRetrieveUpdateView(RetrieveAPIView):
