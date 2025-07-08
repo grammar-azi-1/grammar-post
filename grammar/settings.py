@@ -1,3 +1,5 @@
+
+# grammar/settings.py
 """
 Django settings for grammar project.
 
@@ -54,8 +56,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     # Third Party
-    'cloudinary',
-    'cloudinary_storage',
+    # 'cloudinary',
+    # 'cloudinary_storage',
     "corsheaders",
     'drf_yasg',
     'rest_framework',
@@ -88,13 +90,13 @@ CORS_ALLOWED_ORIGINS = [
     "https://user-service-grammar-azi.onrender.com", 
 ]
 
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+# DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.getenv("CLOUDINARY_CLOUD_NAME"),
-    'API_KEY': os.getenv("CLOUDINARY_API_KEY"),
-    'API_SECRET': os.getenv("CLOUDINARY_API_SECRET"),
-}
+# CLOUDINARY_STORAGE = {
+#     'CLOUD_NAME': os.getenv("CLOUDINARY_CLOUD_NAME"),
+#     'API_KEY': os.getenv("CLOUDINARY_API_KEY"),
+#     'API_SECRET': os.getenv("CLOUDINARY_API_SECRET"),
+# }
 
 ROOT_URLCONF = 'grammar.urls'
 
@@ -243,9 +245,9 @@ DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
-# # Path and URL of media files
-# MEDIA_URL = "/media/" 
-# MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+# Path and URL of media files
+MEDIA_URL = "/media/" 
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
