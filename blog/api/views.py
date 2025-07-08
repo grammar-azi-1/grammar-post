@@ -24,10 +24,6 @@ class NotificationsAPIView(ListCreateAPIView):
 
     def get_queryset(self):
         return Notification.objects.filter(recipient=self.kwargs['userId'])
-    
-    def perform_create(self, serializer):
-        recipient_user = get_object_or_404(User, pk = self.kwargs['userId'])
-        serializer.save(recipient=recipient_user, sender=self.request.user)
 
 
 class NotificationRetrieveAPIView(RetrieveDestroyAPIView):
