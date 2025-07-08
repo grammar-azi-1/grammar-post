@@ -131,8 +131,11 @@ class UserRoleSerializer(serializers.ModelSerializer):
 
 class NotificationSerializer(serializers.ModelSerializer):
 
-    sender = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
-    recipient = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    sender = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), write_only = True)
+    recipient = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), write_only = True)
+
+    sender_detail = UsersMainProfileSerializer(source = 'sender', read_only = True)
+    recipient_detail = UsersMainProfileSerializer(source = 'recipient', read_only = True)
 
     class Meta:
        model = Notification
@@ -141,6 +144,8 @@ class NotificationSerializer(serializers.ModelSerializer):
             "type",
             'sender',
             'recipient',
+            'sender_detail',
+            'recipient_detail',
             "postId",
             "commentId",
             "created_date",
