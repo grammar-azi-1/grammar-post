@@ -1,3 +1,4 @@
+# account/serializers/user/user.py
 from rest_framework import serializers
 from account.models.user import CustomUser
 from typing import Any, Dict
@@ -15,7 +16,7 @@ class UserSerializer(serializers.ModelSerializer):
             "slug"
         ]
 
-   
+ 
 class UpdateProfileSerializer(serializers.ModelSerializer):
     username = serializers.CharField(
         max_length=150,
