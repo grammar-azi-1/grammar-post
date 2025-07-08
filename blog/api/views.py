@@ -78,7 +78,8 @@ class CommentCreateAPIView(ListCreateAPIView):
                 recipient=recipient,
                 sender=request.user,
                 type=notif_type,
-                commentId=comment,
+                commentId=comment.parentCommentId if comment.parentCommentId else None,
+                postId=comment.postId if comment.postId else None,
             )
 
         return JsonResponse(response, safe=False, status=201)
@@ -127,7 +128,8 @@ class PostLikeAPIView(APIView):
 
         if post.liked_by.filter(pk = user.pk).exists():
             post.liked_by.remove(user)
-            post.like -= 1
+            if post.like > 0:
+                post.like -= 1
             post.save()
             return Response({"message": "Unliked", "like_count": post.like}, status=status.HTTP_200_OK)
         else:
@@ -149,7 +151,8 @@ class CommentLikeAPIView(APIView):
         user = request.user
 
         if comment.liked_by.filter(pk = user.pk).exists():
-            comment.like -= 1
+            if comment.like > 0:
+                comment.like -= 1
             comment.liked_by.remove(user)
             comment.save()
             return Response({"message": "Unliked", "like_count": comment.like}, status=status.HTTP_200_OK)

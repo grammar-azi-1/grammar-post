@@ -25,7 +25,7 @@ class CustomUser(AbstractUser):
     profile_picture = models.ImageField(
         upload_to="profile_pictures/",
         blank=True,
-        null=True
+        null=True,
     )
     bio = models.TextField(
         blank=True,
