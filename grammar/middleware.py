@@ -1,8 +1,7 @@
 from django.utils.timezone import now
 
-
 class UpdateLastActivityMixin:
-    def dispatch(self, request, *args, **kwargs):
+    def initial(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             from django.contrib.auth import get_user_model
             User = get_user_model()
