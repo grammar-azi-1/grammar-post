@@ -3,7 +3,7 @@ from django.utils.timezone import now
 class UpdateLastActivityMiddleware:
 
     def __init__(self, get_response):
-        self.response = get_response
+        self.get_response = get_response 
 
     def _is_token_auth(self, request):
         auth = request.META.get('HTTP_AUTHORIZATION', '')
@@ -14,8 +14,7 @@ class UpdateLastActivityMiddleware:
         User = get_user_model()
         user = getattr(request, 'user', None)
 
-        if user and user.is_authenticated and user._is_token_auth(request):
-            User.objects.filter(pk=request.user.pk).update(last_active=now())
+        if user and user.is_authenticated and self._is_token_auth(request):
+            User.objects.filter(pk=user.pk).update(last_active=now())
 
-        return self.response(request)
-    
+        return self.get_response(request) 
