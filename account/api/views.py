@@ -15,7 +15,6 @@ from django.utils.timezone import now, timedelta
 from django.http import JsonResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from grammar.middleware import UpdateLastActivityMixin
 
 class PingView(APIView):
     permission_classes = [IsAuthenticated]
@@ -38,7 +37,7 @@ class UserTokenRefreshView(TokenRefreshView):
         return super().post(request, *args, **kwargs)
 
 
-class UserOnlineApiView(UpdateLastActivityMixin, ListAPIView):
+class UserOnlineApiView(ListAPIView):
     serializer_class = UserOnlineSerializer
 
     def get_queryset(self):
