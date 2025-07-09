@@ -42,7 +42,14 @@ class UserOnlineApiView(ListAPIView):
 
     def get_queryset(self):
         threshold = now() - timedelta(seconds=31)
-        return User.objects.filter(last_active__gte=threshold)
+        queryset = User.objects.filter(last_active__gte=threshold)
+    
+        current_user = self.request.user
+
+        if current_user.is_authenticated and current_user not in queryset:
+            queryset = queryset | User.objects.filter(pk=current_user.pk)
+
+        return queryset.distinct()
 
 class UserRetrieveUpdateView(RetrieveAPIView):
     queryset = User.objects.all()
