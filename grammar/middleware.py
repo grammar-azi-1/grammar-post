@@ -1,6 +1,6 @@
 from django.utils.timezone import now
 
-class UpdateLastActivityMixin:
+class UpdateLastActivityMiddleware:
 
     def __init__(self, get_response):
         self.response = get_response()
