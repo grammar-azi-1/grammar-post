@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     'drf_yasg',
     'rest_framework',
     'rest_framework_simplejwt',
+    "channels",
 
     # Apps
     'core',
@@ -69,6 +70,8 @@ INSTALLED_APPS = [
     'account',
     'grammars',
     'django_filters',
+
+
 ]
 
 
@@ -221,6 +224,18 @@ REST_FRAMEWORK = {
 	], 
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
 
+}
+
+ASGI_APPLICATION = "grammar.asgi.application"
+
+
+CHANNEL_LAYERS = {
+    'default': {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    }
 }
 
 # Celery

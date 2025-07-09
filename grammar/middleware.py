@@ -14,7 +14,7 @@ class UpdateLastActivityMiddleware:
         User = get_user_model()
         user = getattr(request, 'user', None)
 
-        if user and user.is_authenticated and user._is_token_auth(request):
+        if user and user.is_authenticated and self._is_token_auth(request):
             User.objects.filter(pk=request.user.pk).update(last_active=now())
 
         return self.response(request)
