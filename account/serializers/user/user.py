@@ -20,32 +20,21 @@ class UserSerializer(serializers.ModelSerializer):
 
     def get_profile_picture(self, obj):
         if obj.profile_picture:
-            return obj.profile_picture.url  # Cloudinary URL
+            return obj.profile_picture.url 
         return None
 
  
 class UpdateProfileSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(
-        max_length=150,
-        required=False,
-        allow_blank=True
-    )
-    bio = serializers.CharField(
-        max_length=500, 
-        required=False, 
-        allow_blank=True
-    )
-    profile_picture = serializers.ImageField(
-        required=False
-    )
+    profile_picture = serializers.SerializerMethodField()
 
     class Meta:
         model = CustomUser
-        fields = [
-            "username", 
-            "bio", 
-            "profile_picture"
-        ]
+        fields = ["username", "bio", "profile_picture"]
+
+    def get_profile_picture(self, obj):
+        if obj.profile_picture:
+            return obj.profile_picture.url
+        return None
 
     def update(self, instance: CustomUser, validated_data: Dict[str, Any]) -> CustomUser:
         for attr, value in validated_data.items():
