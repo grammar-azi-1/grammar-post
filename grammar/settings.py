@@ -56,8 +56,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     # Third Party
-    # 'cloudinary',
-    # 'cloudinary_storage',
+    'storages',
     "corsheaders",
     'drf_yasg',
     'rest_framework',
@@ -93,13 +92,24 @@ CORS_ALLOWED_ORIGINS = [
     "https://user-service-grammar-azi.onrender.com", 
 ]
 
-# DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+# AWS S3 Storage for Media Files
+AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
+AWS_S3_REGION_NAME = 'eu-north-1' 
+AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.eu-north-1.amazonaws.com'
 
-# CLOUDINARY_STORAGE = {
-#     'CLOUD_NAME': os.getenv("CLOUDINARY_CLOUD_NAME"),
-#     'API_KEY': os.getenv("CLOUDINARY_API_KEY"),
-#     'API_SECRET': os.getenv("CLOUDINARY_API_SECRET"),
-# }
+
+AWS_S3_FILE_OVERWRITE = False
+AWS_DEFAULT_ACL = None
+AWS_QUERYSTRING_AUTH = False
+
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/'
+
+# STATICFILES_STORAGE = 'storages.backends.s3boto3.S3StaticStorage'
+# STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
 
 ROOT_URLCONF = 'grammar.urls'
 
@@ -261,8 +271,8 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
 # Path and URL of media files
-MEDIA_URL = "/media/" 
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+# MEDIA_URL = "/media/" 
+# MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
