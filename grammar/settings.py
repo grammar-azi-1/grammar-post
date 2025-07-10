@@ -56,8 +56,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     # Third Party
-    'cloudinary',
-    'cloudinary_storage',
     "corsheaders",
     'drf_yasg',
     'rest_framework',
@@ -73,6 +71,7 @@ INSTALLED_APPS = [
 
 
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -91,15 +90,6 @@ CORS_ALLOWED_ORIGINS = [
     "https://grammar-azi.vercel.app",
     "https://user-service-grammar-azi.onrender.com", 
 ]
-
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
-    'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
-    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
-}
-
 
 
 # STATICFILES_STORAGE = 'storages.backends.s3boto3.S3StaticStorage'
@@ -237,7 +227,7 @@ CHANNEL_LAYERS = {
     'default': {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("https://grammar-post.onrender.com/", 6379)],
+            "hosts": [("127.0.0.1", 6379)],
         },
     }
 }
@@ -265,8 +255,8 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
 # Path and URL of media files
-# MEDIA_URL = "/media/" 
-# MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_URL = "/media/" 
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
