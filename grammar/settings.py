@@ -58,7 +58,6 @@ INSTALLED_APPS = [
     # Third Party
     'cloudinary',
     'cloudinary_storage',
-    'storages',
     "corsheaders",
     'drf_yasg',
     'rest_framework',
@@ -74,7 +73,6 @@ INSTALLED_APPS = [
 
 
 ]
-
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
