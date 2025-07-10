@@ -5,6 +5,8 @@ from typing import Any, Dict
 
 
 class UserSerializer(serializers.ModelSerializer):
+    profile_picture = serializers.SerializerMethodField()
+
     class Meta:
         model = CustomUser
         fields = [
@@ -15,6 +17,11 @@ class UserSerializer(serializers.ModelSerializer):
             "profile_picture", 
             "slug"
         ]
+
+    def get_profile_picture(self, obj):
+        if obj.profile_picture:
+            return obj.profile_picture.url  # Cloudinary URL
+        return None
 
  
 class UpdateProfileSerializer(serializers.ModelSerializer):
