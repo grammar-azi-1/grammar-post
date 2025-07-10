@@ -243,7 +243,7 @@ CHANNEL_LAYERS = {
     'default': {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("https://grammar-post.onrender.com", 6379)],
+            "hosts": [("https://grammar-post.onrender.com/", 6379)],
         },
     }
 }
