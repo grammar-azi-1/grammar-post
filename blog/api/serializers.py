@@ -1,8 +1,6 @@
 from rest_framework import serializers
 from blog.models import Comment, Post
 
-
-
        
 class CommentSerializer(serializers.ModelSerializer):
     
@@ -20,6 +18,7 @@ class CommentSerializer(serializers.ModelSerializer):
         )
         read_only_fields = ('postId', 'userId', 'like', 'created_date')
 
+
 class PostSerializer(serializers.ModelSerializer):
     
     class Meta:
@@ -30,6 +29,7 @@ class PostSerializer(serializers.ModelSerializer):
             'image',
             'content',
         )
+
 
 class PostFilterSerializer(serializers.ModelSerializer):
     shareLink = serializers.SerializerMethodField()
@@ -58,6 +58,7 @@ class PostFilterSerializer(serializers.ModelSerializer):
 
     def get_shareLink(self, obj):
         return f'https://grammarazi.onrender.com/en/api/posts/{obj.id}/'
+
 
 class PostShareSerializer(serializers.ModelSerializer):
     

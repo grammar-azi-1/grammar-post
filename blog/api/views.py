@@ -17,6 +17,9 @@ from grammar.utils import get_user_form_jwt
 from rest_framework import status
 from rest_framework.views import APIView
 from django.db import models
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+
 
 class NotificationsAPIView(ListCreateAPIView):
     serializer_class = NotificationSerializer
@@ -31,10 +34,71 @@ class NotificationRetrieveAPIView(RetrieveDestroyAPIView):
     queryset = Notification.objects.all()
 
 
+
+
 class CommentCreateAPIView(ListCreateAPIView):
     serializer_class = CommentSerializer
     queryset = Comment.objects.all()
     permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get_queryset(self):
+        return Comment.objects.filter(postId=self.kwargs['post_id'])
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        serializer.save(
+            userId=request.user,
+            postId_id=self.kwargs['post_id']
+        )
+
+        comment = serializer.instance
+        recipient = None
+        notif_type = None
+
+        if comment.parentCommentId:
+            recipient = comment.parentCommentId.userId
+            notif_type = 'commented_comment'
+        else:
+            recipient = comment.postId.userId
+            notif_type = 'reply'
+
+        content = serializer.validated_data.get('content', '')
+        tags = [word for word in content.split() if word.startswith('#')]
+
+        response = {
+            "commentId": comment.id,
+            "message": "Şərh uğurla yaradıldı",
+        }
+
+        if recipient and request.user != recipient:
+            notification = Notification.objects.create(
+                recipient=recipient,
+                sender=request.user,
+                type=notif_type,
+                commentId=comment.parentCommentId if comment.parentCommentId else None,
+                postId=comment.postId if comment.postId else None,
+            )
+
+            # WebSocket vasitəsilə bildiriş göndər
+            channel_layer = get_channel_layer()
+            async_to_sync(channel_layer.group_send)(
+                f"user_{recipient.id}",
+                {
+                    "type": "send_notification",
+                    "data": {
+                        "notification_id": notification.id,
+                        "type": notif_type,
+                        "sender": request.user.username,
+                        "post_id": comment.postId.id if comment.postId else None,
+                        "comment_id": comment.id,
+                        "message": f"{request.user.username} sizin {'şərhinizə cavab verdi' if notif_type == 'commented_comment' else 'postunuza şərh yazdı'}"
+                    }
+                }
+            )
+
+        return JsonResponse(response, safe=False, status=201)
 
     def get_queryset(self):
         return Comment.objects.filter(postId=self.kwargs['post_id'])
@@ -110,53 +174,103 @@ class PostShareRetrieveUpdateAPIView(RetrieveAPIView):
     serializer_class = PostShareSerializer
     queryset = Post.objects.all()
 
+
 class PostLikeAPIView(APIView):
-    permission_classes = [IsAuthenticatedOrReadOnly,]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def post(self, request, pk):
         try:
             post = Post.objects.get(pk=pk)
-
         except Post.DoesNotExist:
-            return Response({'error': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': 'Post tapılmadı'}, status=status.HTTP_404_NOT_FOUND)
 
         user = request.user
 
-        if post.liked_by.filter(pk = user.pk).exists():
+        if post.liked_by.filter(pk=user.pk).exists():
             post.liked_by.remove(user)
             if post.like > 0:
                 post.like -= 1
             post.save()
-            return Response({"message": "Unliked", "like_count": post.like}, status=status.HTTP_200_OK)
+            return Response({"message": "Bəyənmə ləğv edildi", "like_count": post.like}, status=status.HTTP_200_OK)
         else:
             post.liked_by.add(user)
             post.like += 1
             post.save()
-            return Response({"message": "Liked", "like_count": post.like}, status=status.HTTP_200_OK)
+
+            # Bildiriş yaradın və WebSocket vasitəsilə göndərin
+            if user != post.userId:
+                notification = Notification.objects.create(
+                    recipient=post.userId,
+                    sender=user,
+                    type='like',
+                    postId=post
+                )
+
+                channel_layer = get_channel_layer()
+                async_to_sync(channel_layer.group_send)(
+                    f"user_{post.userId.id}",
+                    {
+                        "type": "send_notification",
+                        "data": {
+                            "notification_id": notification.id,
+                            "type": "like",
+                            "sender": user.username,
+                            "post_id": post.id,
+                            "message": f"{user.username} sizin postunuzu bəyəndi"
+                        }
+                    }
+                )
+
+            return Response({"message": "Bəyənildi", "like_count": post.like}, status=status.HTTP_200_OK)
         
+
 class CommentLikeAPIView(APIView):
-    permission_classes = [IsAuthenticatedOrReadOnly,]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def post(self, request, pk):
         try:
             comment = Comment.objects.get(pk=pk)
-
         except Comment.DoesNotExist:
-            return Response({'error': 'Comment not found'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': 'Şərh tapılmadı'}, status=status.HTTP_404_NOT_FOUND)
 
         user = request.user
 
-        if comment.liked_by.filter(pk = user.pk).exists():
+        if comment.liked_by.filter(pk=user.pk).exists():
             if comment.like > 0:
                 comment.like -= 1
             comment.liked_by.remove(user)
             comment.save()
-            return Response({"message": "Unliked", "like_count": comment.like}, status=status.HTTP_200_OK)
+            return Response({"message": "Bəyənmə ləğv edildi", "like_count": comment.like}, status=status.HTTP_200_OK)
         else:
             comment.like += 1
             comment.liked_by.add(user)
             comment.save()
-            return Response({"message": "Liked", "like_count": comment.like}, status=status.HTTP_200_OK)
+
+            # Bildiriş yaradın və WebSocket vasitəsilə göndərin
+            if user != comment.userId:
+                notification = Notification.objects.create(
+                    recipient=comment.userId,
+                    sender=user,
+                    type='comment_like',
+                    commentId=comment
+                )
+
+                channel_layer = get_channel_layer()
+                async_to_sync(channel_layer.group_send)(
+                    f"user_{comment.userId.id}",
+                    {
+                        "type": "send_notification",
+                        "data": {
+                            "notification_id": notification.id,
+                            "type": "comment_like",
+                            "sender": user.username,
+                            "comment_id": comment.id,
+                            "message": f"{user.username} sizin şərhinizi bəyəndi"
+                        }
+                    }
+                )
+
+            return Response({"message": "Bəyənildi", "like_count": comment.like}, status=status.HTTP_200_OK)
 
 class PostCreateAPIView(ListCreateAPIView):
     serializer_class = PostFilterSerializer

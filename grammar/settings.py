@@ -1,5 +1,3 @@
-
-# grammar/settings.py
 """
 Django settings for grammar project.
 
@@ -223,11 +221,12 @@ REST_FRAMEWORK = {
 ASGI_APPLICATION = "grammar.asgi.application"
 
 
+# grammar/settings.py
 CHANNEL_LAYERS = {
     'default': {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("127.0.0.1", 6379)],
+            "hosts": [os.getenv("REDIS_URL", "redis://red-d1i695qdbo4c7387met0:6379")],
         },
     }
 }
