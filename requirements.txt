@@ -80,9 +80,6 @@ vine==5.1.0
 virtualenv==20.28.0
 wcwidth==0.2.13
 zope.interface==7.2
-<<<<<<< HEAD
-=======
 channels==4.1.0
 redis>=4.0
 channels_redis
->>>>>>> 9ddca54e414906a4256f5a4873b0d9a746f60c87
