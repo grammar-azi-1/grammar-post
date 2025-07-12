@@ -13,4 +13,4 @@ echo "🚀 Starting Celery worker in background..."
 celery -A grammar worker --loglevel=info &
 
 echo "🌐 Starting Django server..."
-python daphne grammar.asgi:application
+daphne grammar.asgi:application
