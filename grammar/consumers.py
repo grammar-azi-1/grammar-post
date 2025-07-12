@@ -63,7 +63,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def get_user_from_token(self, token):
         try:
-            from rest_framework_simplejwt.tokens import AccessToken  # <-- gecikdirilmiş import
+            from rest_framework_simplejwt.tokens import AccessToken
             from django.contrib.auth import get_user_model
             User = get_user_model()
             access_token = AccessToken(token)
