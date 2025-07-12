@@ -14,4 +14,4 @@ RUN chmod +x /app/start.sh
 
 EXPOSE 8000
 
-CMD ["daphne grammar.asgi:application"]
+CMD ["./start.sh"]
