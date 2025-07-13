@@ -2,12 +2,14 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView
     )
-from drf_yasg.utils import swagger_auto_schema
 from rest_framework.generics import ListCreateAPIView, RetrieveAPIView, ListAPIView
 from account.api.serializers import UserAPIProfileSerializer, UserTokenRefreshSerializer, UserOnlineSerializer, UsersMainProfileSerializer, GroupSerializer, UserRoleSerializer
 from account.api.filters import UserFilterset
 from django.contrib.auth.models import Group
+from datetime import timedelta
 from django.contrib.auth import get_user_model
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from django.shortcuts import get_object_or_404
 User = get_user_model()
@@ -43,11 +45,27 @@ class UserOnlineApiView(ListAPIView):
     def get_queryset(self):
         threshold = now() - timedelta(seconds=31)
         queryset = User.objects.filter(last_active__gte=threshold)
-    
+
         current_user = self.request.user
 
-        if current_user.is_authenticated and current_user not in queryset:
-            queryset = queryset | User.objects.filter(pk=current_user.pk)
+        if current_user.is_authenticated:
+            # Update last_active
+            current_user.last_active = now()
+            current_user.save(update_fields=['last_active'])
+
+            # Make sure they appear in the list
+            if current_user not in queryset:
+                queryset = queryset | User.objects.filter(pk=current_user.pk)
+
+            # Send WebSocket update to clients
+            channel_layer = get_channel_layer()
+            async_to_sync(channel_layer.group_send)(
+                "online_users_group",
+                {
+                    "type": "broadcast_online",
+                    "message": f"{current_user.username} is active",
+                }
+            )
 
         return queryset.distinct()
 

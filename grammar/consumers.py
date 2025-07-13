@@ -71,3 +71,18 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             return User.objects.get(id=user_id)
         except Exception:
             return None
+
+
+class OnlineUserConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        await self.channel_layer.group_add("online_users_group", self.channel_name)
+        await self.accept()
+
+    async def disconnect(self, close_code):
+        await self.channel_layer.group_discard("online_users_group", self.channel_name)
+
+    async def broadcast_online(self, event):
+        await self.send(text_data=json.dumps({
+            "type": "user_online",
+            "message": event["message"]
+        }))
