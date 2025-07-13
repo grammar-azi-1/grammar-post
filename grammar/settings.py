@@ -92,8 +92,11 @@ MIDDLEWARE = [
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "https://grammar-azi.vercel.app",
-    "https://user-service-grammar-azi.onrender.com", 
+    "https://user-service-grammar-azi.onrender.com",
+    "http://grammarazi.online",
+    "https://grammarazi.online",
 ]
+
 
 
 # STATICFILES_STORAGE = 'storages.backends.s3boto3.S3StaticStorage'
