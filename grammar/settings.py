@@ -34,7 +34,13 @@ JWT_SIGNING_KEY = os.getenv("JWT_SIGNING_KEY", "django-insecure-^@ws^%f(+gq+pyu-
 # Quick-start development settings - unsuitable for production
 DEBUG = os.getenv("DEBUG", "True") == "True"
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [
+    "grammarazi.online",
+    "www.grammarazi.online",
+    "grammar-post.onrender.com",
+    "user-service-grammar-azi.onrender.com",
+]
+
 
 SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-^@ws^%f(+gq+pyu-r_!_t!j8fdn9!f#n*4y7m_(^)7$3_-")
 
@@ -129,8 +135,9 @@ CSRF_TRUSTED_ORIGINS = [
     'https://grammarbackendpub-14.onrender.com',
     'https://grammarazi.onrender.com',
     'https://user-service-grammar-azi.onrender.com',
-    'https://grammar-post.onrender.com/',
-
+    'https://grammar-post.onrender.com',
+    'http://grammarazi.online',
+    'https://grammarazi.online',
 ]
 
 import os
