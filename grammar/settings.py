@@ -92,6 +92,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://user-service-grammar-azi.onrender.com",
     "http://grammarazi.online",
     "https://grammarazi.online",
+    "https://www.grammarazi.online",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -154,6 +155,7 @@ CSRF_TRUSTED_ORIGINS = [
     'https://grammar-post.onrender.com',
     'http://grammarazi.online',
     'https://grammarazi.online',
+    'https://www.grammarazi.online',
 ]
 
 import os
