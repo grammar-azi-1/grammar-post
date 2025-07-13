@@ -15,6 +15,7 @@ from dotenv import load_dotenv
 from pathlib import Path
 from datetime import timedelta
 import grammar.middleware
+from corsheaders.defaults import default_headers, default_methods
 
 
 load_dotenv()
@@ -34,12 +35,7 @@ JWT_SIGNING_KEY = os.getenv("JWT_SIGNING_KEY", "django-insecure-^@ws^%f(+gq+pyu-
 # Quick-start development settings - unsuitable for production
 DEBUG = os.getenv("DEBUG", "True") == "True"
 
-ALLOWED_HOSTS = [
-    "grammarazi.online",
-    "www.grammarazi.online",
-    "grammar-post.onrender.com",
-    "user-service-grammar-azi.onrender.com",
-]
+ALLOWED_HOSTS = ["*"]
 
 
 SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-^@ws^%f(+gq+pyu-r_!_t!j8fdn9!f#n*4y7m_(^)7$3_-")
@@ -78,10 +74,10 @@ INSTALLED_APPS = [
 
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
-    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -89,12 +85,29 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'grammar.middleware.UpdateLastActivityMiddleware',
 ]
+
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "https://grammar-azi.vercel.app",
     "https://user-service-grammar-azi.onrender.com",
     "http://grammarazi.online",
     "https://grammarazi.online",
+]
+
+CORS_ALLOW_CREDENTIALS = True
+
+
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    "authorization",
+    "content-type",
+    "x-csrftoken",
+    "accept",
+    "origin",
+    "access-control-allow-origin",
+]
+
+CORS_ALLOW_METHODS = list(default_methods) + [
+    "OPTIONS",
 ]
 
 
