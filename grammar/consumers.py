@@ -84,5 +84,5 @@ class OnlineUserConsumer(AsyncWebsocketConsumer):
     async def broadcast_online(self, event):
         await self.send(text_data=json.dumps({
             "type": "user_online",
-            "message": event["message"]
+            "message": event.get("message", ""),
         }))

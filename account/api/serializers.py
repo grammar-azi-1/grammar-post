@@ -65,7 +65,9 @@ class UsersMainProfileSerializer(serializers.ModelSerializer):
             'id',
             'username',
             'profile_picture',
-            'posts'
+            'posts',
+            'bio',
+            'date_joined',
         )
 
 
