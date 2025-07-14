@@ -40,7 +40,7 @@ class CustomUser(AbstractUser):
     last_active = models.DateTimeField(default=now)
     online_status = models.BooleanField(default=False)
     
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True, default=now)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["username"]
