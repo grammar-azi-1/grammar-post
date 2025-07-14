@@ -6,6 +6,9 @@ python manage.py makemigrations
 echo "🛠 Applying all migrations..."
 python manage.py migrate --noinput
 
+echo "📦 Collecting static files..."
+python manage.py collectstatic --noinput
+
 echo "👤 Creating superuser if not exists..."
 python manage.py create_super_user
 
