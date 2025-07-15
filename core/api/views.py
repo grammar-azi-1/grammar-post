@@ -9,16 +9,17 @@ Url = settings.BOT_URL
 my_token = settings.BOT_TOKEN
 my_chatid = settings.CHAT_ID
 
-def send_file_to_telegram(file_field, bot_token, chat_id):
+def send_file_to_telegram(file_field, bot_token, chat_id, caption=""):
     url = f'https://api.telegram.org/bot{bot_token}/sendDocument'
 
-    # file_field should be a File object (e.g., from a model like checkup.file)
     with file_field.open('rb') as f:
         files = {
             'document': (file_field.name, f)
         }
         data = {
-            'chat_id': chat_id
+            'chat_id': chat_id,
+            'caption': caption,
+            'parse_mode': 'HTML'  # optional for formatting
         }
         response = requests.post(url, files=files, data=data)
         return response.json()
@@ -32,15 +33,14 @@ class CheckUpApiView(ListCreateAPIView):
         if serializer.is_valid():
             validated_data = serializer.validated_data
             checkup = Check_up.objects.create(**validated_data)
-            # Optionally modify or inspect validated_data
-            message = f'comment:{checkup.comment},\nphone_number:{checkup.phone_number}'
-            file = f'file:{checkup.file.file}'
-            url = f'https://api.telegram.org/bot{my_token}/sendMessage?chat_id={my_chatid}&text={message}'
-            Fileurl = f'https://api.telegram.org/bot{my_token}/sendDocument?chat_id={my_chatid}&document={file}'
+
+            message = f"<b>Comment:</b> {checkup.comment}\n<b>Phone Number:</b> {checkup.phone_number}"
 
             if checkup.accept_policy:
                 serializer.save()
-                send_file_to_telegram(checkup.file, my_token, my_chatid)
-                requests.get(url)
+                # Send document with caption
+                send_file_to_telegram(checkup.file, my_token, my_chatid, caption=message)
                 return JsonResponse(data=serializer.data, safe=False, status=201)
-            return JsonResponse(data=serializer.errors, safe=False, status=400)
+
+        return JsonResponse(data=serializer.errors, safe=False, status=400)
+        
