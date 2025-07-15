@@ -1,7 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-
 from account.managers import CustomUserManager
 from utils.slug_manager import generate_unique_slug
 from django.utils.timezone import now
@@ -39,6 +38,8 @@ class CustomUser(AbstractUser):
     )
     last_active = models.DateTimeField(default=now)
     online_status = models.BooleanField(default=False)
+    
+    created_at = models.DateTimeField(default=now)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["username"]

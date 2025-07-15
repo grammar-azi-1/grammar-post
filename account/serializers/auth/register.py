@@ -16,6 +16,7 @@ class RegisterSerializer(serializers.ModelSerializer):
     including email verification.
     """
     email = serializers.EmailField()
+    created_at = serializers.DateTimeField(read_only=True)
     verification_code = serializers.CharField(
         min_length=6, 
         max_length=6
@@ -44,6 +45,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             "password", 
             "bio", 
             "profile_picture",
+            "created_at",
             "slug"
         ]
     
