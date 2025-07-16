@@ -1,7 +1,29 @@
 import json
-from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
+import logging
+from channels.generic.websocket import AsyncWebsocketConsumer
 
+logger = logging.getLogger(__name__)
+
+
+class OnlineUserConsumer(AsyncWebsocketConsumer):
+    GROUP = "online_users_group"
+
+    async def connect(self):
+        logger.debug("WS connect user=%s", self.scope["user"])
+        await self.channel_layer.group_add(self.GROUP, self.channel_name)
+        await self.accept()
+
+    async def disconnect(self, close_code):
+        await self.channel_layer.group_discard(self.GROUP, self.channel_name)
+
+    async def broadcast_online(self, event):
+
+        logger.debug("WS send to %s: %s", self.channel_name, event)
+        await self.send(text_data=json.dumps({
+            "type": "user_online",
+            "message": event.get("message", ""),
+        }))
 
 class NotificationConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -73,16 +95,3 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             return None
 
 
-class OnlineUserConsumer(AsyncWebsocketConsumer):
-    async def connect(self):
-        await self.channel_layer.group_add("online_users_group", self.channel_name)
-        await self.accept()
-
-    async def disconnect(self, close_code):
-        await self.channel_layer.group_discard("online_users_group", self.channel_name)
-
-    async def broadcast_online(self, event):
-        await self.send(text_data=json.dumps({
-            "type": "user_online",
-            "message": event.get("message", ""),
-        }))
