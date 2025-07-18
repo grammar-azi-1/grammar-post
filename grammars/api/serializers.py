@@ -3,9 +3,6 @@ from grammars.models import RuleCategory, RuleSubCategory
 from grammars.api.utils import higlight
 
 class RuleSubCategorySerializer(serializers.ModelSerializer):
-
-    content = serializers.SerializerMethodField()
-
     class Meta:
         model = RuleSubCategory
         fields = (
@@ -15,10 +12,17 @@ class RuleSubCategorySerializer(serializers.ModelSerializer):
             'content',
         )
 
-    def get_content(self, obj):
+    def to_representation(self, instance):
+        # Call the parent method to get the original representation
+        representation = super().to_representation(instance)
+        
         request = self.context.get('request')
         term = getattr(request, '_search_term', '')
-        return higlight(obj.content, term)
+        
+        if term:
+            representation['content'] = higlight(instance.content, term)
+        
+        return representation
 
 
 class RuleCategorySerializer(serializers.ModelSerializer):
