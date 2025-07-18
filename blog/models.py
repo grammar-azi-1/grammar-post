@@ -47,6 +47,9 @@ class Comment(AbstractModel):
 class Notification(AbstractModel):
     NOTIFICATION_TYPES = (
         ('like', 'Like'),
+        ('unlike', 'Unlike'),
+        ('unlike_comment', 'Unlike Comment'),
+        ('post_create', 'Post Create'),
         ('reply', 'Reply'),
         ('comment_like', 'Like comment'),
         ('commented_comment', 'Commented to comment'),

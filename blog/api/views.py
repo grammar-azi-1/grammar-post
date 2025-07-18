@@ -191,7 +191,31 @@ class PostLikeAPIView(APIView):
             if post.like > 0:
                 post.like -= 1
             post.save()
-            return Response({"message": "Bəyənmə ləğv edildi", "like_count": post.like}, status=status.HTTP_200_OK)
+
+            if user != post.userId:
+                notification = Notification.objects.create(
+                    recipient=post.userId,
+                    sender=user,
+                    type='unlike',
+                    postId=post
+                )
+
+                channel_layer = get_channel_layer()
+                async_to_sync(channel_layer.group_send)(
+                    f"user_{post.userId.id}",
+                    {
+                        "type": "send_notification",
+                        "data": {
+                            "notification_id": notification.id,
+                            "type": "unlike",
+                            "sender": user.username,
+                            "post_id": post.id,
+                            "message": f"{user.username} sizin postunuzdan bəyənini geri aldi"
+                        }
+                    }
+                )
+
+            return Response({"message": "Bəyəni geri alindi", "like_count": post.like}, status=status.HTTP_200_OK)
         else:
             post.liked_by.add(user)
             post.like += 1
@@ -240,7 +264,31 @@ class CommentLikeAPIView(APIView):
                 comment.like -= 1
             comment.liked_by.remove(user)
             comment.save()
-            return Response({"message": "Bəyənmə ləğv edildi", "like_count": comment.like}, status=status.HTTP_200_OK)
+
+            if user != comment.userId:
+                notification = Notification.objects.create(
+                    recipient=comment.userId,
+                    sender=user,
+                    type='comment_like',
+                    commentId=comment
+                )
+
+                channel_layer = get_channel_layer()
+                async_to_sync(channel_layer.group_send)(
+                    f"user_{comment.userId.id}",
+                    {
+                        "type": "send_notification",
+                        "data": {
+                            "notification_id": notification.id,
+                            "type": "unlike_comment",
+                            "sender": user.username,
+                            "comment_id": comment.id,
+                            "message": f"{user.username} sizin şərhinizden bəyənini geri aldi"
+                        }
+                    }
+                )
+
+            return Response({"message": "Bəyəni geri alindi", "like_count": comment.like}, status=status.HTTP_200_OK)
         else:
             comment.like += 1
             comment.liked_by.add(user)
@@ -372,4 +420,32 @@ class PostCreateAPIView(ListCreateAPIView):
                 "shareLink": f"https://grammarazi.onrender.com/en/api/posts/{serializer.data['id']}" 
             }
         
+        post = serializer.instance
+        recipient = post.userId
+        notif_type = 'post_create'
+        
+        if recipient and request.user != recipient:
+            notification = Notification.objects.create(
+                recipient=recipient,
+                sender=request.user,
+                type=notif_type,
+                postId = post.id,
+            )
+
+            # WebSocket vasitəsilə bildiriş göndər
+            channel_layer = get_channel_layer()
+            async_to_sync(channel_layer.group_send)(
+                f"user_{recipient.id}",
+                {
+                    "type": "send_notification",
+                    "data": {
+                        "notification_id": notification.id,
+                        "type": notif_type,
+                        "sender": request.user.username,
+                        "post_id": post.id,
+                        "message": f"{request.user.username} post yaratdi"
+                    }
+                }
+            )
+
         return JsonResponse(response, safe=False, status=201)
