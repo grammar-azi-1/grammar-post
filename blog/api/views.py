@@ -237,7 +237,7 @@ class PostLikeAPIView(APIView):
                         "type": "send_notification",
                         "data": {
                             "notification_id": notification.id,
-                            "type": "like",
+                            "type": "like_post",
                             "sender": user.username,
                             "post_id": post.id,
                             "message": f"{user.username} sizin postunuzu bəyəndi"
