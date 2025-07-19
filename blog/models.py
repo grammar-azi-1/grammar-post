@@ -34,7 +34,7 @@ class Comment(AbstractModel):
     postId = models.ForeignKey(Post, related_name='comments', on_delete=models.CASCADE, null=True, blank=True)
 
     like = models.PositiveIntegerField(default=0)
-    image = models.ImageField(upload_to='comment_images/', blank=True, null=True, validators=[validate_file_size, validate_file_type])
+    image = models.ImageField(upload_to='comment_images/', blank=True, null=True, validators=[validate_file_size,])
     content = models.TextField(max_length=350)
     liked_by = models.ManyToManyField(User, related_name='liked_comments', blank=True)
 
